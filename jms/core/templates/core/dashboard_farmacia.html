@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Farmacia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <h1>🏥 Farmacia - {{ request.user.username }}</h1>
+  <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+
+  <h2>📦 Entregar medicamento</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Cédula del paciente:</label>
+    <input type="text" name="documento_paciente" required>
+
+    <label>Seleccione medicamento:</label>
+    <select name="medicamento_id" required>
+      <option value="">Seleccione uno...</option>
+      {% for medicamento in medicamentos %}
+        <option value="{{ medicamento.id }}">{{ medicamento.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Dosis:</label>
+    <input type="text" name="dosis" required>
+
+    <label>Observaciones (opcional):</label>
+    <input type="text" name="observaciones">
+
+    <button type="submit">Registrar entrega</button>
+  </form>
+
+  <h2>💊 Medicamentos entregados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Medicamento</th>
+        <th>Dosis</th>
+        <th>Fecha</th>
+        <th>Observaciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entrega in entregas %}
+      <tr>
+        <td>{{ entrega.paciente }}</td>
+        <td>{{ entrega.medicamento }}</td>
+        <td>{{ entrega.dosis }}</td>
+        <td>{{ entrega.fecha_entrega }}</td>
+        <td>{{ entrega.observaciones }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No se han registrado entregas aún.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

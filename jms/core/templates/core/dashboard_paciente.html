@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard del Paciente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <h1>Bienvenido, {{ request.user.username }} 👋</h1>
+  <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+
+  <h2>📋 Información del Paciente</h2>
+  <p><strong>Nombre:</strong> {{ nombre }}</p>
+  <p><strong>EPS:</strong> {{ eps }}</p>
+
+  <h2>📦 Medicamentos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Dosis</th>
+        <th>Farmacia</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for med in medicamentos %}
+        <tr>
+          <td>{{ med.medicamento.nombre }}</td>
+          <td>{{ med.dosis }}</td>
+          <td>{{ med.farmacia.username }}</td>
+          <td>{{ med.fecha_entrega|date:"d/m/Y" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">No hay medicamentos registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>🧪 Muestras</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Medicamento</th>
+        <th>Enfermero</th>
+        <th>Fecha</th>
+        <th>Enviada</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for muestra in muestras %}
+        <tr>
+          <td>{{ muestra.medicamento.nombre }}</td>
+          <td>{{ muestra.enfermero.username }}</td>
+          <td>{{ muestra.fecha_toma|date:"d/m/Y" }}</td>
+          <td>{% if muestra.enviada_laboratorio %}Sí{% else %}No{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">No hay muestras registradas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>🔬 Resultados de Laboratorio</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Resultado</th>
+        <th>Laboratorio</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resultado in resultados %}
+        <tr>
+          <td>{{ resultado.resultado }}</td>
+          <td>{{ resultado.laboratorio.username }}</td>
+          <td>{{ resultado.fecha_resultado|date:"d/m/Y" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No hay resultados registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

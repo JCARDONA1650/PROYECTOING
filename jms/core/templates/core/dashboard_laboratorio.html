@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Laboratorio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <h1>🔬 Laboratorio - {{ request.user.username }}</h1>
+  <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+
+  <h2>🧪 Muestras clínicas pendientes</h2>
+  {% if muestras_disponibles %}
+    <form method="post">
+      {% csrf_token %}
+      <label for="muestra_id">Selecciona muestra:</label>
+      <select name="muestra_id" required>
+        <option value="">-- Seleccionar muestra --</option>
+        {% for muestra in muestras_disponibles %}
+          <option value="{{ muestra.id }}">
+            {{ muestra.id }} - {{ muestra.paciente.persona.numero_documento }} - {{ muestra.medicamento.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="resultado">Resultado:</label>
+      <input type="text" name="resultado" required>
+
+      <button type="submit">Registrar resultado</button>
+    </form>
+  {% else %}
+    <p>No hay muestras pendientes.</p>
+  {% endif %}
+
+  <h2>📋 Resultados registrados</h2>
+  {% if resultados %}
+  <table>
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Muestra</th>
+        <th>Resultado</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resultado in resultados %}
+      <tr>
+        <td>{{ resultado.muestra.paciente.persona.numero_documento }}</td>
+        <td>{{ resultado.muestra.id }} - {{ resultado.muestra.medicamento.nombre }}</td>
+        <td>{{ resultado.resultado }}</td>
+        <td>{{ resultado.fecha_resultado|date:"d/m/Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No has registrado resultados aún.</p>
+  {% endif %}
+</body>
+</html>

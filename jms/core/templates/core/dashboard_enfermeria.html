@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Enfermería</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <h1>👩‍⚕️ Enfermería - {{ request.user.username }}</h1>
+  <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+
+  {% if exito %}<div class="alert alert-success">{{ exito }}</div>{% endif %}
+  {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+  <!-- Aplicación de Medicamento -->
+  <h2>💉 Aplicar medicamento</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="accion" value="medicamento">
+
+    <label>Cédula del paciente:</label>
+    <input type="text" name="documento_paciente" required>
+
+    <label>Seleccione medicamento:</label>
+    <select name="medicamento" required>
+      <option value="">-- Seleccionar --</option>
+      {% for m in medicamentos %}
+        <option value="{{ m.id }}">{{ m.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Dosis:</label>
+    <input type="text" name="dosis" required>
+
+    <label>Observaciones (opcional):</label>
+    <input type="text" name="observaciones">
+
+    <button type="submit">Registrar aplicación</button>
+  </form>
+
+  <!-- Toma de Muestra Clínica -->
+  <h2>🧪 Tomar muestra clínica</h2>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="accion" value="muestra">
+
+    <label>Cédula del paciente:</label>
+    <input type="text" name="documento_paciente" required>
+
+    <label>Tipo de muestra (ej. Hemograma, Orina):</label>
+    <select name="muestra_id" required>
+      <option value="">-- Seleccionar --</option>
+      {% for m in muestras_clinicas %}
+        <option value="{{ m.id }}">{{ m.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Observaciones (opcional):</label>
+    <input type="text" name="observaciones">
+
+    <button type="submit">Registrar muestra</button>
+  </form>
+
+  <!-- Muestras tomadas -->
+  <h2>📋 Muestras tomadas</h2>
+  {% if muestras %}
+  <table>
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Tipo de muestra</th>
+        <th>Fecha</th>
+        <th>Observaciones</th>
+        <th>Enviada</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for muestra in muestras %}
+      <tr>
+        <td>{{ muestra.paciente.persona.numero_documento }}</td>
+        <td>{{ muestra.medicamento.nombre }}</td>
+        <td>{{ muestra.fecha_toma|date:"d/m/Y H:i" }}</td>
+        <td>{{ muestra.observaciones }}</td>
+        <td>{% if muestra.enviada_laboratorio %}Sí{% else %}No{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No has registrado muestras aún.</p>
+  {% endif %}
+</body>
+</html>

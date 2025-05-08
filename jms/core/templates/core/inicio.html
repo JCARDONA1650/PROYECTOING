@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio del Sistema</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    window.onload = function () {
+      const token = localStorage.getItem('token');
+      const rol = localStorage.getItem('rol');
+
+      if (!token || !rol) {
+        // No está autenticado
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Redirigir según el rol
+      switch (rol) {
+        case 'paciente':
+          window.location.href = 'dashboard_paciente.html';
+          break;
+        case 'enfermeria':
+          window.location.href = 'dashboard_enfermeria.html';
+          break;
+        case 'farmacia':
+          window.location.href = 'dashboard_farmacia.html';
+          break;
+        case 'laboratorio':
+          window.location.href = 'dashboard_laboratorio.html';
+          break;
+        default:
+          window.location.href = 'login.html';
+          break;
+      }
+    };
+  </script>
+</head>
+<body>
+  <p>Redirigiendo...</p>
+</body>
+</html>
